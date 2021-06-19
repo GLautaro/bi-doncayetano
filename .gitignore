@@ -130,4 +130,4 @@ dmypy.json
 
 
 .streamlit/secrets.toml
-.vscode/setting.json
+.vscode/settings.json
