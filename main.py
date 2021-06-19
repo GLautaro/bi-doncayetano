@@ -7,7 +7,7 @@ from sqlalchemy import create_engine
 #Importacion Paginas
 import Pages.introduccion as introduccion
 import Pages.requerimientos as requerimientos
-
+import Pages.proveedores as proveedores
 
 # Conexion BD
 alchemyEngine=create_engine(f"postgresql+psycopg2://{st.secrets['user']}:{st.secrets['password']}@{st.secrets['host']}/{st.secrets['dbname']}", pool_recycle=3600)
@@ -22,12 +22,14 @@ dbConnection.close()
 def CreateLayout():
     st.sidebar.title("Menú")
     app_mode = st.sidebar.selectbox("Seleccione una página:",
-                                    ["Introducción", "Requerimientos"])
+                                    ["Introducción", "Requerimientos", "Proveedores"])
     
     if app_mode == 'Introducción':
         introduccion.LoadPage()
     elif app_mode == 'Requerimientos':
         requerimientos.LoadPage(df)
+    elif app_mode == 'Proveedores':
+        proveedores.LoadPage(df)
     else:
         pass
 
