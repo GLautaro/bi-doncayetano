@@ -45,7 +45,7 @@ def requerimiento_4(dataset):
     st.write(fig)
 
     
- def requerimiento_7(dataset):
+def requerimiento_7(dataset):
     st.header("Comparador por condicion de pago")
     proveedores = st.multiselect("Seleccione proveedores", list(df["nombre_proveedor"].unique()), ["Dahyana Azabal", "Agustin Chiavassa"])
 
