@@ -24,7 +24,7 @@ dbConnection.close()
 def CreateLayout():
     st.sidebar.title("Menú")
     app_mode = st.sidebar.selectbox("Seleccione una página:",
-                                    ["Introducción", "Requerimientos", "Proveedores", "Productos", "Productos Dahy"])
+                                    ["Introducción", "Requerimientos", "Proveedores", "Productos"])
     
     if app_mode == 'Introducción':
         introduccion.LoadPage()
