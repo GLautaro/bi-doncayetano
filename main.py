@@ -9,7 +9,6 @@ import Pages.introduccion as introduccion
 import Pages.requerimientos as requerimientos
 import Pages.proveedores as proveedores
 import Pages.productos as productos
-import Pages.productos_dahy as productos_dahy
 
 # Conexion BD
 alchemyEngine=create_engine(f"postgresql+psycopg2://{st.secrets['user']}:{st.secrets['password']}@{st.secrets['host']}/{st.secrets['dbname']}", pool_recycle=3600)
@@ -35,8 +34,6 @@ def CreateLayout():
         proveedores.LoadPage(df)
     elif app_mode == 'Productos':
         productos.LoadPage(df)
-    elif app_mode == 'Productos Dahy':
-        productos_dahy.LoadPage(df)
     else:
         pass
 
