@@ -28,8 +28,6 @@ def CreateLayout():
     
     if app_mode == 'Introducción':
         introduccion.LoadPage()
-    elif app_mode == 'Requerimientos':
-        requerimientos.LoadPage(df)
     elif app_mode == 'Proveedores':
         proveedores.LoadPage(df)
     elif app_mode == 'Productos':

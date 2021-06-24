@@ -20,14 +20,24 @@ def requerimiento_1(dataset):
         #df_r1_mes =df_r1_mes.astype({"anio_solicitud": str})
         #df_r1_mes['mes_anio'] = df_r1_mes[['nombre_mes_solicitud', 'anio_solicitud']].agg(' '.join, axis=1)
         df_r1 = df_r1.sort_values(['mes_solicitud'])
-        fig = px.bar(df_r1, x='nombre_mes_solicitud', y='Porcentaje', color="nombre_producto")
+        fig = px.bar(df_r1, x='nombre_mes_solicitud', y='Porcentaje', color="nombre_producto", labels={
+                     "nombre_mes_solicitud": "Mes Solicitud",
+                     "Porcentaje": "Porcentaje",
+                     "nombre_producto": "Producto"
+                 })
  
     else:
         df_r1 = df_r1.groupby(['anio_solicitud', 'nombre_producto']).agg({'cantidad_solicitada': 'sum'})
         df_r1['Porcentaje'] = df_r1.groupby(level=0).apply(lambda x:100 * x / float(x.sum()))
         df_r1 = df_r1.reset_index()
         df_r1 =df_r1.astype({"anio_solicitud": str})
-        fig = px.bar(df_r1, x='anio_solicitud', y='Porcentaje', color="nombre_producto")
+        fig = px.bar(df_r1, x='anio_solicitud', y='Porcentaje', color="nombre_producto", labels={
+                     "anio_solicitud": "Año Solicitud",
+                     "Porcentaje": "Porcentaje",
+                     "nombre_producto": "Producto"
+                 })
+        fig.update_layout(xaxis_title="Año", yaxis_title="Porcentaje")
+
     st.write(fig)
 
 def requerimiento_2(dataset, meses):
@@ -45,6 +55,7 @@ def requerimiento_2(dataset, meses):
      label='Mes', options=list(map(lambda x : meses[x - 1], meses_dataset)))
     df_r2_mes = df_r2_mes.loc[df_r2_mes['nombre_mes_solicitud'] == mes_r2]
     df_r2_mes = df_r2_mes.groupby(['nombre_producto', 'nombre_proveedor']).agg({'cantidad_solicitada': 'sum', 'cantidad_recibida':'sum'})
+    df_r2_mes = df_r2_mes.rename(columns={'cantidad_solicitada': 'Cantidad Solicitada', 'cantidad_recibida': 'Cantidad Recibida'})
     st.write(df_r2_mes)
     st.write('Por año')
     tipo_producto_r2_mes= st.selectbox(key="tipo_producto_r2_anio",
@@ -56,6 +67,7 @@ def requerimiento_2(dataset, meses):
     options=(2019,2020,2021))
     df_r2_anio = df_r2_anio.loc[df_r2_anio['anio_solicitud'] == anio_r2]
     df_r2_anio = df_r2_anio.groupby(['nombre_producto', 'nombre_proveedor']).agg({'cantidad_solicitada': 'sum', 'cantidad_recibida':'sum'})
+    df_r2_anio = df_r2_anio.rename(columns={'cantidad_solicitada': 'Cantidad Solicitada', 'cantidad_recibida': 'Cantidad Recibida'})
     st.write(df_r2_anio)
 
 def requerimiento_5(dataset):
@@ -73,12 +85,22 @@ def requerimiento_5(dataset):
         df = df.groupby(['mes_solicitud','nombre_mes_solicitud','nombre_producto']).agg({'id_producto': 'count'})
         df = df.sort_values(['mes_solicitud'])
         df = df.reset_index()
-        fig = px.bar(df, x='nombre_mes_solicitud', y='id_producto', color="nombre_producto")
+        fig = px.bar(df, x='nombre_mes_solicitud', y='id_producto', color="nombre_producto", labels={
+                     "nombre_mes_solicitud": "Mes solicitud",
+                     "id_producto": "Frecuencia",
+                     "nombre_producto": "Producto"
+                 })
+
     else: 
         df = df.groupby(['anio_solicitud','nombre_producto']).agg({'id_producto': 'count'})
         df = df.reset_index()
         df =df.astype({"anio_solicitud": str})
-        fig = px.bar(df, x='anio_solicitud', y='id_producto', color="nombre_producto")
+        fig = px.bar(df, x='anio_solicitud', y='id_producto', color="nombre_producto", labels={
+                     "anio_solicitud": "Año solicitud",
+                     "id_producto": "Frecuencia",
+                     "nombre_producto": "Producto"
+                 },)
+
     st.write(fig)
     
     st.write('Promedio de cantidad comprada')
@@ -94,12 +116,21 @@ def requerimiento_5(dataset):
         df = df.groupby(['mes_solicitud','nombre_mes_solicitud','nombre_producto']).agg({'cantidad_solicitada': 'mean'})
         df = df.sort_values(['mes_solicitud'])
         df = df.reset_index()
-        fig = px.bar(df, x='nombre_mes_solicitud', y='cantidad_solicitada', color="nombre_producto")
+        fig = px.bar(df, x='nombre_mes_solicitud', y='cantidad_solicitada', color="nombre_producto",labels={
+                     "nombre_mes_solicitud": "Mes solicitud",
+                     "cantidad_solicitada": "Promedio cantidad solicitada",
+                     "nombre_producto": "Producto"
+                 }, )
+
     else: 
         df = df.groupby(['anio_solicitud','nombre_producto']).agg({'cantidad_solicitada': 'mean'})
         df = df.reset_index()
         df =df.astype({"anio_solicitud": str})
-        fig = px.bar(df, x='anio_solicitud', y='cantidad_solicitada', color="nombre_producto")
+        fig = px.bar(df, x='anio_solicitud', y='cantidad_solicitada', color="nombre_producto", labels={
+                     "anio_solicitud": "Año solicitud",
+                     "cantidad_solicitada": "Promedio cantidad solicitada",
+                     "nombre_producto": "Producto"
+                 })
     st.write(fig)
 
 
@@ -110,10 +141,17 @@ def requerimiento_8(df):
     options= list(df["nombre_producto"].unique()))
     df=df.loc[df['nombre_producto'] == producto]
     df = df.groupby(['nombre_producto', 'mes_recepcion', 'nombre_mes_recepcion', 'anio_recepcion']).agg({'precio_unitario': 'mean'}).sort_values(by=['anio_recepcion', 'mes_recepcion'])
-    st.write(df)
+    df_to_show = df.rename(columns={'precio_unitario': 'Precio unitario'})
+    st.write(df_to_show)
     df = df.reset_index()
+    df = df.sort_values(['mes_recepcion'])
     df =df.astype({"anio_recepcion": str})
-    fig = px.bar(df, x='nombre_mes_recepcion', y='precio_unitario' , color="anio_recepcion")
+    fig = px.bar(df, x='nombre_mes_recepcion', y='precio_unitario' , color="anio_recepcion", labels={
+                     "nombre_mes_recepcion": "Mes recepción",
+                     "precio_unitario": "Promedio precio unitario",
+                     "anio_recepcion": "Año recepción"
+                 })
+    fig.update_layout(xaxis_title="Mes", yaxis_title="Precio unitario", legend_title="Años")
     st.write(fig)
 
 def requerimiento_10(df, meses):
@@ -123,6 +161,8 @@ def requerimiento_10(df, meses):
      label='Mes', options=list(map(lambda x : meses[x - 1], meses_dataset)))
     df = df.loc[df['nombre_mes_solicitud'] == mes]
     df = df.groupby(['nombre_tipo_producto']).agg({'cantidad_solicitada': 'sum'}).sort_values(by=['cantidad_solicitada'])
+    df = df.rename(columns={'cantidad_solicitada': 'Cantidad Solicitada', 'cantidad_recibida': 'Cantidad Recibida'})
+
     st.write(df)
 
 
