@@ -1,9 +1,11 @@
 import streamlit as st
 import pandas as pd
 import plotly.express as px
+from utils.consts import meses
+
 
 def requerimiento_1(dataset):
-    st.header('1 - Porcentajes de ingredientes solicitados por mes')
+    st.header('Porcentajes de productos solicitados por mes/año')
     st.write('Por mes')
     tipo_producto = st.selectbox(
      'Tipo Producto',
@@ -11,17 +13,35 @@ def requerimiento_1(dataset):
     anio = st.selectbox(
      'Año',
     (2019,2020,2021, 'Todos los años'))
+    
     df_r1 = dataset.loc[dataset['nombre_tipo_producto'] == tipo_producto]
     if anio != 'Todos los años':
         df_r1 = df_r1.loc[df_r1['anio_solicitud'] == anio]
-        df_r1 = df_r1.groupby(['mes_solicitud', 'nombre_mes_solicitud', 'nombre_producto']).agg({'cantidad_solicitada': 'sum'})
-        df_r1['Porcentaje'] = df_r1.groupby(['mes_solicitud']).apply(lambda x:100 * x / float(x.sum()))
-        df_r1 = df_r1.reset_index()
-        #df_r1_mes =df_r1_mes.astype({"anio_solicitud": str})
-        #df_r1_mes['mes_anio'] = df_r1_mes[['nombre_mes_solicitud', 'anio_solicitud']].agg(' '.join, axis=1)
-        df_r1 = df_r1.sort_values(['mes_solicitud'])
-        fig = px.bar(df_r1, x='nombre_mes_solicitud', y='Porcentaje', color="nombre_producto", labels={
+        meses_dataset = sorted(df_r1.mes_solicitud.unique())
+        op_meses = list(map(lambda x : meses[x - 1], meses_dataset))
+        op_meses.append('Todos los meses')
+        mes_r1= st.selectbox(key="mes_r1",
+        label='Mes', options=op_meses)
+        if(mes_r1 == 'Todos los meses'):
+            df_r1 = df_r1.groupby(['mes_solicitud', 'nombre_mes_solicitud', 'nombre_producto']).agg({'cantidad_solicitada': 'sum'})
+            df_r1['Porcentaje'] = df_r1.groupby(['mes_solicitud']).apply(lambda x:100 * x / float(x.sum()))
+            df_r1 = df_r1.reset_index()
+            #df_r1_mes =df_r1_mes.astype({"anio_solicitud": str})
+            #df_r1_mes['mes_anio'] = df_r1_mes[['nombre_mes_solicitud', 'anio_solicitud']].agg(' '.join, axis=1)
+            df_r1 = df_r1.sort_values(['mes_solicitud'])
+            fig = px.bar(df_r1, x='nombre_mes_solicitud', y='Porcentaje', color="nombre_producto", labels={
                      "nombre_mes_solicitud": "Mes Solicitud",
+                     "Porcentaje": "Porcentaje",
+                     "nombre_producto": "Producto"
+                 })
+        else:
+            df_r1 = df_r1.loc[df_r1['nombre_mes_solicitud'] == mes_r1]       
+            df_r1 = df_r1.groupby(['nombre_producto']).agg({'cantidad_solicitada': 'sum'})
+            df_r1['Porcentaje'] = df_r1.apply(lambda x:100 * x / float(x.sum()))
+            df_r1 = df_r1.reset_index()
+            #df_r1_mes =df_r1_mes.astype({"anio_solicitud": str})
+            #df_r1_mes['mes_anio'] = df_r1_mes[['nombre_mes_solicitud', 'anio_solicitud']].agg(' '.join, axis=1)
+            fig = px.pie(df_r1, values='Porcentaje', names="nombre_producto", labels={
                      "Porcentaje": "Porcentaje",
                      "nombre_producto": "Producto"
                  })
@@ -41,7 +61,7 @@ def requerimiento_1(dataset):
     st.write(fig)
 
 def requerimiento_2(dataset, meses):
-    st.header('2 - Relación de cantidad solicitada y entregada por producto por proveedor')
+    st.header('Relación de cantidad solicitada y entregada por producto por proveedor')
     tipo_producto_r2_mes= st.selectbox(key="tipo_producto_r2_mes",
      label='Tipo Producto',
     options=('Ingrediente', 'Packaging', 'Insumo descartable'))
@@ -71,7 +91,7 @@ def requerimiento_2(dataset, meses):
     st.write(df_r2_anio)
 
 def requerimiento_5(dataset):
-    st.header('5 y 9 - Promedio de compras de productos por mes')
+    st.header('Promedio de compras de productos por mes/año')
     st.write('Frecuencia de compra')
     tipo_producto= st.selectbox(key="tipo_producto_r5",
      label='Tipo Producto',
@@ -135,7 +155,7 @@ def requerimiento_5(dataset):
 
 
 def requerimiento_8(df):
-    st.header("8 - Histórico de precio de compra por producto")
+    st.header("Histórico de precio de compra por producto")
     producto = st.selectbox(key="id_producto",
      label='Producto',
     options= list(df["nombre_producto"].unique()))
@@ -155,7 +175,7 @@ def requerimiento_8(df):
     st.write(fig)
 
 def requerimiento_10(df, meses):
-    st.header("10 - Tipos de ingredientes más solicitados por mes")
+    st.header("Tipos de ingredientes más solicitados por mes")
     meses_dataset = sorted(df.mes_solicitud.unique())
     mes = st.selectbox(key="mes_r2",
      label='Mes', options=list(map(lambda x : meses[x - 1], meses_dataset)))
@@ -169,6 +189,8 @@ def requerimiento_10(df, meses):
 def LoadPage(dataset):
     meses = ['Enero', 'Febrero', 'Marzo','Abril', 'Mayo','Junio','Julio','Agosto','Septiembre', 'Octubre', 'Noviembre', 'Diciembre' ]
     
+    st.title("Requerimientos relacionados a los productos")
+
     requerimiento_1(dataset)
 
     requerimiento_2(dataset, meses)
