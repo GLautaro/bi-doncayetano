@@ -18,7 +18,7 @@ def requerimiento_3(dataset):
         mes_r3= st.selectbox(key="mes_r3",
         label='Mes', options=op_meses)
         if(mes_r3 == 'Todos los meses'):
-            df_r3_mes = df_r3_mes.groupby(['nombre_mes_recepcion','mes_recepcion', 'nombre_proveedor']).agg({'cantidad_recibida': 'sum'})
+            df_r3_mes = df_r3_mes.groupby(['mes_recepcion', 'nombre_mes_recepcion', 'nombre_proveedor']).agg({'cantidad_recibida': 'sum'})
             df_r3_mes = df_r3_mes.sort_values(by=['mes_recepcion', 'cantidad_recibida'], ascending=[True, False])
             df_r3_mes_to_graph = df_r3_mes.reset_index()
             fig = px.bar(df_r3_mes_to_graph, x='nombre_mes_recepcion', y='cantidad_recibida', color="nombre_proveedor", labels={
@@ -28,7 +28,7 @@ def requerimiento_3(dataset):
                  })
         else:
             df_r3_mes = df_r3_mes.loc[df_r3_mes['nombre_mes_recepcion'] == mes_r3]
-            df_r3_mes = df_r3_mes.groupby(['nombre_mes_recepcion','mes_recepcion', 'nombre_proveedor']).agg({'cantidad_recibida': 'sum'})
+            df_r3_mes = df_r3_mes.groupby(['mes_recepcion', 'nombre_mes_recepcion', 'nombre_proveedor']).agg({'cantidad_recibida': 'sum'})
             df_r3_mes = df_r3_mes.sort_values(by=['mes_recepcion', 'cantidad_recibida'], ascending=[True, False])
             df_r3_mes_to_graph = df_r3_mes.reset_index()
             fig = px.pie(df_r3_mes_to_graph, values='cantidad_recibida', names="nombre_proveedor", labels={

@@ -176,8 +176,12 @@ def requerimiento_8(df):
 
 def requerimiento_10(df, meses):
     st.header("Tipos de ingredientes más solicitados por mes")
+    anio = st.selectbox(key="anio_r10",
+     label='Año',
+    options=(2019,2020,2021))
+    df = df.loc[df['anio_solicitud'] == anio]
     meses_dataset = sorted(df.mes_solicitud.unique())
-    mes = st.selectbox(key="mes_r2",
+    mes = st.selectbox(key="mes_r10",
      label='Mes', options=list(map(lambda x : meses[x - 1], meses_dataset)))
     df = df.loc[df['nombre_mes_solicitud'] == mes]
     df = df.groupby(['nombre_tipo_producto']).agg({'cantidad_solicitada': 'sum'}).sort_values(by=['cantidad_solicitada'])
