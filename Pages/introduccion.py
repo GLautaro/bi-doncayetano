@@ -14,3 +14,7 @@ def LoadPage():
     st.write('- Azábal, Dahyana')
     st.write('- Chiavassa, Agustín')
     st.write('- González, Lautaro Iván')
+
+    st.subheader('Profesores:')
+    st.write('- Sacco, Pablo Alberto')
+    st.write('- Callejas, Marisa Del Carmen')
