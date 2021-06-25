@@ -153,6 +153,87 @@ def requerimiento_5(dataset):
                  })
     st.write(fig)
 
+def requerimiento_5_alt(dataset):
+    st.header('Frecuencia de compra por producto')
+    st.write('Por mes')
+    tipo_producto= st.selectbox(key="tipo_producto_r5_alt",
+     label='Tipo Producto',
+    options=('Ingrediente', 'Packaging', 'Insumo descartable'))
+    anio = st.selectbox(key="anio_r5_alt",
+     label='Año',
+    options=(2019,2020,2021, 'Todos los años'))
+    df=dataset.loc[dataset['nombre_tipo_producto'] == tipo_producto]
+    if anio != 'Todos los años':
+        df = df.loc[df['anio_solicitud'] == anio]
+        df = df.groupby(['mes_solicitud','nombre_mes_solicitud','nombre_producto']).agg({'id_producto': 'count'})
+        df = df.reset_index()
+        df = df.groupby(['nombre_producto']).agg({'id_producto': 'mean'})
+        df = df.reset_index()
+
+        fig = px.bar(df, x='nombre_producto', y='id_producto', labels={
+                     "id_producto": "Frecuencia de compra por mes",
+                     "nombre_producto": "Producto"
+                 })
+
+    else: 
+        df = df.groupby(['mes_solicitud','nombre_mes_solicitud','nombre_producto']).agg({'id_producto': 'count'})
+        df = df.reset_index()
+        df = df.groupby(['nombre_producto']).agg({'id_producto': 'mean'})
+        df = df.reset_index()
+        fig = px.bar(df, x='nombre_producto', y='id_producto',labels={
+                     "id_producto": "Frecuencia de compra por mes",
+                     "nombre_producto": "Producto"
+                 },)
+    st.write(fig)
+
+    st.write('Por año')
+    df_anual=dataset.loc[dataset['nombre_tipo_producto'] == tipo_producto]
+    df_anual = df_anual.groupby(['anio_solicitud', 'nombre_producto']).agg({'id_producto': 'count'})
+    df_anual = df_anual.reset_index()
+    df_anual =df_anual.astype({"anio_solicitud": str})
+    df_anual = df_anual.groupby(['nombre_producto']).agg({'id_producto': 'mean'})
+    df_anual = df_anual.reset_index()
+    fig_anual = px.bar(df_anual, x='nombre_producto', y='id_producto',labels={
+                     "id_producto": "Frecuencia de compra anual",
+                     "nombre_producto": "Producto"
+                 },)
+
+    st.write(fig_anual)
+    
+    st.header('Promedio de cantidad solicitada por producto')
+    tipo_producto= st.selectbox(key="tipo_producto_r5_prom_alt",
+     label='Tipo Producto',
+    options=('Ingrediente', 'Packaging', 'Insumo descartable'))
+    anio = st.selectbox(key="anio_r5_prom_alt",
+     label='Año',
+    options=(2019,2020,2021, 'Todos los años'))
+    df=dataset.loc[dataset['nombre_tipo_producto'] == tipo_producto]
+    if anio != 'Todos los años':
+        df = df.loc[df['anio_solicitud'] == anio]
+        meses_dataset = sorted(df.mes_solicitud.unique())
+        op_meses = list(map(lambda x : meses[x - 1], meses_dataset))
+        op_meses.append('Todos los meses')
+        mes = st.selectbox(key="mes_r_alt",
+     label='Mes', options=op_meses)
+        if mes != 'Todos los meses':
+            df = df.loc[df['nombre_mes_solicitud'] == mes]
+        df = df.groupby(['nombre_producto']).agg({'cantidad_solicitada': 'mean'})
+        df = df.reset_index()
+        fig = px.bar(df, x='nombre_producto', y='cantidad_solicitada', labels={
+                     "cantidad_solicitada": "Promedio cantidad solicitada",
+                     "nombre_producto": "Producto"
+                 }, )
+
+    else: 
+        df = df.groupby(['anio_solicitud','nombre_producto']).agg({'cantidad_solicitada': 'mean'})
+        df = df.reset_index()
+        df =df.astype({"anio_solicitud": str})
+        fig = px.bar(df, x='anio_solicitud', y='cantidad_solicitada', color="nombre_producto", labels={
+                     "anio_solicitud": "Año solicitud",
+                     "cantidad_solicitada": "Promedio cantidad solicitada",
+                     "nombre_producto": "Producto"
+                 })
+    st.write(fig)
 
 def requerimiento_8(df):
     st.header("Histórico de precio de compra por producto")
@@ -195,7 +276,7 @@ def LoadPage(dataset):
 
     requerimiento_2(dataset, meses)
 
-    requerimiento_5(dataset)
+    requerimiento_5_alt(dataset)
 
     requerimiento_8(dataset)
 
