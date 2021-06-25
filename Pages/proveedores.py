@@ -82,7 +82,7 @@ def requerimiento_4(dataset):
         df_r4_mes['cantidad_perdida'] =  df_r4_mes['cantidad_solicitada'] - df_r4_mes['cantidad_recibida']
         df_r4_mes['porcentaje_perdida'] = df_r4_mes.apply(lambda x:100 * x.cantidad_perdida / x.cantidad_solicitada,axis=1)
         df_r4_mes = df_r4_mes.reset_index()
-        fig = px.pie(df_r4_mes, values='porcentaje_perdida', names="nombre_proveedor", labels={
+        fig = px.bar(df_r4_mes, x='nombre_proveedor', y="porcentaje_perdida", labels={
            "porcentaje_perdida": "Porcentaje de pérdida",
             "nombre_proveedor": "Proveedor"
         })
